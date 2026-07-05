@@ -64,21 +64,53 @@ document.addEventListener("DOMContentLoaded", () => {
     setActiveLink();
     window.addEventListener("scroll", setActiveLink, { passive: true });
 
-    const form = document.querySelector(".contact-form");
+/* ==========================
+   CONTACT FORM
+========================== */
 
-    if (form) {
-        form.addEventListener("submit", event => {
-            event.preventDefault();
+const form = document.querySelector(".contact-form");
 
-            const button = form.querySelector("button");
-            const originalText = button.textContent;
+if (form) {
 
-            button.textContent = "Message Sent ✓";
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        const button = form.querySelector("button");
+
+        button.disabled = true;
+        button.textContent = "Sending...";
+
+        const data = new FormData(form);
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: data,
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        if (response.ok) {
+
             form.reset();
 
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2200);
-        });
-    }
+            button.textContent = "✓ Message Sent";
+
+        } else {
+
+            button.textContent = "Something went wrong";
+
+        }
+
+        setTimeout(() => {
+
+            button.disabled = false;
+            button.textContent = "Send Message";
+
+        }, 3000);
+
+    });
+
+}
 });
